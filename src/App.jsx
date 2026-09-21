@@ -97,7 +97,7 @@ function App() {
           if (typeof json === 'object' && json !== null && !Array.isArray(json)) {
             let txtOutput = "";
             for (const [key, value] of Object.entries(json)) {
-              txtOutput += `${key}\n~~~\n${value}\n~~~\n\n`;
+              txtOutput += `${key}\n\`\`\`\n${value}\n\`\`\`\n\n`;
             }
             setJsonToTxtOutput(txtOutput);
           } else {
@@ -118,7 +118,7 @@ function App() {
       alert("Both Question and Answer are required.");
       return;
     }
-    const newEntry = `${txtSingleQ.trim()}\n~~~\n${txtSingleA.trim()}\n~~~\n\n`;
+    const newEntry = `${txtSingleQ.trim()}\n\`\`\`\n${txtSingleA.trim()}\n\`\`\`\n\n`;
     setJsonToTxtOutput(prev => prev + newEntry);
     setTxtSingleQ("");
     setTxtSingleA("");
@@ -139,8 +139,8 @@ function App() {
 
   const parseQAString = (text) => {
     const pairs = {};
-    // Split by the ~~~ delimiter
-    const parts = text.split('~~~');
+    // Split by the ``` delimiter
+    const parts = text.split('```');
     
     // Each Q&A pair is represented by 2 consecutive parts
     for (let i = 0; i < parts.length - 1; i += 2) {
@@ -169,7 +169,7 @@ function App() {
           mergeData(pairs);
           alert(`Successfully extracted ${count} Q&A pair(s) from ${file.name}.`);
         } else {
-          alert(`Error: No valid Q&A pairs found in ${file.name}.\n\nPlease ensure your questions and answers are separated by exactly '~~~'.`);
+          alert(`Error: No valid Q&A pairs found in ${file.name}.\n\nPlease ensure your questions and answers are separated by exactly '\`\`\`'.`);
         }
         
         setIsLoading(false);
@@ -214,9 +214,9 @@ function App() {
             if (failedFiles.length === 0) {
                alert(`Successfully extracted ${successCount} Q&A pair(s) from ${files.length} file(s).`);
             } else if (successCount > 0) {
-               alert(`Successfully extracted ${successCount} Q&A pair(s).\n\nFailed to parse ${failedFiles.length} file(s):\n${failedFiles.join(', ')}\n\nEnsure questions and answers are separated by '~~~'.`);
+               alert(`Successfully extracted ${successCount} Q&A pair(s).\n\nFailed to parse ${failedFiles.length} file(s):\n${failedFiles.join(', ')}\n\nEnsure questions and answers are separated by '\`\`\`'.`);
             } else {
-               alert(`Error: No valid Q&A pairs found in any of the uploaded files.\n\nPlease ensure your questions and answers are separated by exactly '~~~'.`);
+               alert(`Error: No valid Q&A pairs found in any of the uploaded files.\n\nPlease ensure your questions and answers are separated by exactly '\`\`\`'.`);
             }
           }, 800);
         }
@@ -406,7 +406,7 @@ function App() {
           <div className="card text-center" style={{padding: '4rem 2rem'}}>
             <h2>Single File Converter</h2>
             <p className="hint" style={{marginBottom: '2rem'}}>
-              Upload a single text file containing multiple questions and answers. The answers must be enclosed in <code>~~~</code> blocks.
+              Upload a single text file containing multiple questions and answers. The answers must be enclosed in <code>```</code> blocks.
               It will automatically read, convert to JSON, and merge into your database.
             </p>
             <div className="upload-btn-wrapper mt-3">
@@ -425,7 +425,7 @@ function App() {
           <div className="card text-center" style={{padding: '4rem 2rem'}}>
             <h2>Batch Files Converter</h2>
             <p className="hint" style={{marginBottom: '2rem'}}>
-              Upload <strong>multiple</strong> text files at once. All files will be parsed (answers enclosed in <code>~~~</code> blocks), merged together, and added to your database.
+              Upload <strong>multiple</strong> text files at once. All files will be parsed (answers enclosed in <code>```</code> blocks), merged together, and added to your database.
             </p>
             <div className="upload-btn-wrapper mt-3">
               <button className="btn btn-success" style={{padding: '1rem 2rem', fontSize: '1.2rem'}}>Select Multiple TXT Files</button>
@@ -444,7 +444,7 @@ function App() {
             <div className="card text-center">
               <h2>Reverse Converter: JSON to TXT</h2>
               <p className="hint" style={{marginBottom: '1rem'}}>
-                Upload any JSON file containing a flat dictionary to instantly convert it to your <code>~~~</code> delimited text format.
+                Upload any JSON file containing a flat dictionary to instantly convert it to your <code>```</code> delimited text format.
               </p>
               <div className="upload-btn-wrapper mt-3">
                 <button className="btn btn-primary" style={{padding: '0.75rem 1.5rem', fontSize: '1rem'}}>Select JSON File</button>
