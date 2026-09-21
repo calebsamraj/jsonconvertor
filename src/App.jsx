@@ -9,6 +9,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [isLogoSpinning, setIsLogoSpinning] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [jsonToTxtOutput, setJsonToTxtOutput] = useState("");
   
   const [isFirstVisit] = useState(() => {
     const visited = sessionStorage.getItem('hasVisited');
@@ -80,6 +81,48 @@ function App() {
     reader.readAsText(file);
     e.target.value = ''; // Reset input
   };
+
+  const handleJsonToTxtUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setIsLoading(true);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setTimeout(() => {
+        try {
+          const json = JSON.parse(event.target.result);
+          if (typeof json === 'object' && json !== null && !Array.isArray(json)) {
+            let txtOutput = "";
+            for (const [key, value] of Object.entries(json)) {
+              txtOutput += `${key}\n~~~\n${value}\n~~~\n\n`;
+            }
+            setJsonToTxtOutput(txtOutput);
+          } else {
+            alert('Invalid JSON format. Expected a flat dictionary.');
+          }
+        } catch (err) {
+          alert('Failed to parse JSON file.');
+        }
+        setIsLoading(false);
+      }, 800);
+    };
+    reader.readAsText(file);
+    e.target.value = ''; // Reset input
+  };
+
+  const downloadJsonToTxt = () => {
+    if (!jsonToTxtOutput) return;
+    const blob = new Blob([jsonToTxtOutput], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'converted_output.txt';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
 
   const parseQAString = (text) => {
     const pairs = {};
@@ -285,6 +328,7 @@ function App() {
         <button className={`tab-btn ${activeTab === 'manual' ? 'active' : ''}`} onClick={() => setActiveTab('manual')}>Manual Entry</button>
         <button className={`tab-btn ${activeTab === 'bulk' ? 'active' : ''}`} onClick={() => setActiveTab('bulk')}>Single File Converter</button>
         <button className={`tab-btn ${activeTab === 'bulk-multi' ? 'active' : ''}`} onClick={() => setActiveTab('bulk-multi')}>Batch Files Converter</button>
+        <button className={`tab-btn ${activeTab === 'json-to-txt' ? 'active' : ''}`} onClick={() => setActiveTab('json-to-txt')}>JSON to TXT</button>
         <button className={`tab-btn ${activeTab === 'preview' ? 'active' : ''}`} onClick={() => setActiveTab('preview')}>Preview Database</button>
       </div>
 
@@ -367,6 +411,46 @@ function App() {
             )}
           </div>
         )}
+
+        {activeTab === 'json-to-txt' && (
+          <div className="card text-center" style={{padding: '4rem 2rem'}}>
+            <h2>Reverse Converter: JSON to TXT</h2>
+            <p className="hint" style={{marginBottom: '2rem'}}>
+              Upload any JSON file containing a flat dictionary of questions and answers. 
+              We will convert it into a text file formatted with your <code>~~~</code> delimiters.
+            </p>
+            <div className="upload-btn-wrapper mt-3">
+              <button className="btn btn-primary" style={{padding: '1rem 2rem', fontSize: '1.2rem'}}>Select JSON File</button>
+              <input type="file" accept=".json" onChange={handleJsonToTxtUpload} />
+            </div>
+            
+            {jsonToTxtOutput && (
+              <div style={{ marginTop: '3rem', textAlign: 'left' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <h3 style={{ margin: 0, color: 'var(--text-color)' }}>TXT Preview</h3>
+                  <button className="btn btn-success" onClick={downloadJsonToTxt} style={{ padding: '0.5rem 1.5rem', fontSize: '1rem' }}>Download TXT</button>
+                </div>
+                <div className="preview-list">
+                  <pre style={{ 
+                    margin: 0, 
+                    background: 'rgba(0,0,0,0.85)', 
+                    padding: '1.5rem', 
+                    borderRadius: '0.5rem', 
+                    fontFamily: '"Fira Code", "Courier New", Courier, monospace',
+                    fontSize: '0.9rem',
+                    color: '#e2e8f0',
+                    overflowX: 'auto',
+                    border: '1px solid rgba(0, 0, 0, 0.2)',
+                    whiteSpace: 'pre-wrap'
+                  }}>
+                    {jsonToTxtOutput}
+                  </pre>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {activeTab === 'preview' && (
           <div className="card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
