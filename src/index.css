@@ -110,7 +110,8 @@ body {
   height: 120px;
   border-radius: 50%;
   object-fit: cover;
-  animation: spin 1.5s linear infinite;
+  animation: spin3d 1.5s linear infinite;
+  transform-style: preserve-3d;
   box-shadow: 0 0 25px rgba(99, 102, 241, 0.6);
   border: 3px solid #818cf8;
 }
