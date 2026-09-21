@@ -10,6 +10,8 @@ function App() {
   const [isLogoSpinning, setIsLogoSpinning] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [jsonToTxtOutput, setJsonToTxtOutput] = useState("");
+  const [txtSingleQ, setTxtSingleQ] = useState("");
+  const [txtSingleA, setTxtSingleA] = useState("");
   
   const [isFirstVisit] = useState(() => {
     const visited = sessionStorage.getItem('hasVisited');
@@ -109,6 +111,17 @@ function App() {
     };
     reader.readAsText(file);
     e.target.value = ''; // Reset input
+  };
+
+  const handleAddTxtSingle = () => {
+    if (!txtSingleQ.trim() || !txtSingleA.trim()) {
+      alert("Both Question and Answer are required.");
+      return;
+    }
+    const newEntry = `${txtSingleQ.trim()}\n~~~\n${txtSingleA.trim()}\n~~~\n\n`;
+    setJsonToTxtOutput(prev => prev + newEntry);
+    setTxtSingleQ("");
+    setTxtSingleA("");
   };
 
   const downloadJsonToTxt = () => {
@@ -336,8 +349,16 @@ function App() {
         {activeTab === 'manual' && (
           <>
             <div className="card">
-              <h2>Upload Existing JSON</h2>
-              <div className="upload-btn-wrapper">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                  <h2>JSON Database Options</h2>
+                  <p className="hint">Upload an existing JSON file to merge, or start a fresh one.</p>
+                </div>
+                <button className="btn" onClick={clearDatabase} style={{ backgroundColor: '#ef4444', borderColor: '#ef4444', color: '#fff', fontSize: '0.85rem', padding: '0.4rem 0.8rem' }}>
+                  Create New JSON Database
+                </button>
+              </div>
+              <div className="upload-btn-wrapper mt-3">
                 <button className="btn">Upload JSON (Merge)</button>
                 <input type="file" accept=".json" onChange={handleJsonUpload} />
               </div>
@@ -413,23 +434,48 @@ function App() {
         )}
 
         {activeTab === 'json-to-txt' && (
-          <div className="card text-center" style={{padding: '4rem 2rem'}}>
-            <h2>Reverse Converter: JSON to TXT</h2>
-            <p className="hint" style={{marginBottom: '2rem'}}>
-              Upload any JSON file containing a flat dictionary of questions and answers. 
-              We will convert it into a text file formatted with your <code>~~~</code> delimiters.
-            </p>
-            <div className="upload-btn-wrapper mt-3">
-              <button className="btn btn-primary" style={{padding: '1rem 2rem', fontSize: '1.2rem'}}>Select JSON File</button>
-              <input type="file" accept=".json" onChange={handleJsonToTxtUpload} />
+          <>
+            <div className="card text-center">
+              <h2>Reverse Converter: JSON to TXT</h2>
+              <p className="hint" style={{marginBottom: '1rem'}}>
+                Upload any JSON file containing a flat dictionary to instantly convert it to your <code>~~~</code> delimited text format.
+              </p>
+              <div className="upload-btn-wrapper mt-3">
+                <button className="btn btn-primary" style={{padding: '0.75rem 1.5rem', fontSize: '1rem'}}>Select JSON File</button>
+                <input type="file" accept=".json" onChange={handleJsonToTxtUpload} />
+              </div>
+            </div>
+
+            <div className="card">
+              <h2>Add Q&A Pair (TXT)</h2>
+              <p className="hint">Manually type a question and answer to append it directly to the TXT preview.</p>
+              <div className="input-group">
+                <label>Question</label>
+                <textarea 
+                  value={txtSingleQ} 
+                  onChange={(e) => setTxtSingleQ(e.target.value)} 
+                  placeholder="e.g. What is React?"
+                  rows={2}
+                />
+              </div>
+              <div className="input-group mt-3">
+                <label>Answer</label>
+                <textarea 
+                  value={txtSingleA} 
+                  onChange={(e) => setTxtSingleA(e.target.value)} 
+                  placeholder="e.g. A JavaScript library for building user interfaces."
+                  rows={4}
+                />
+              </div>
+              <button className="btn btn-primary mt-3" onClick={handleAddTxtSingle}>Add to TXT Preview</button>
             </div>
             
             {jsonToTxtOutput && (
-              <div style={{ marginTop: '3rem', textAlign: 'left' }}>
+              <div className="card" style={{ marginTop: '2rem', textAlign: 'left' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                   <h3 style={{ margin: 0, color: 'var(--text-color)' }}>TXT Preview</h3>
                   <div style={{ display: 'flex', gap: '1rem' }}>
-                    <button className="btn" onClick={() => setJsonToTxtOutput("")} style={{ padding: '0.5rem 1.5rem', fontSize: '1rem', backgroundColor: '#ef4444', borderColor: '#ef4444', color: '#fff' }}>Remove File</button>
+                    <button className="btn" onClick={() => setJsonToTxtOutput("")} style={{ padding: '0.5rem 1.5rem', fontSize: '1rem', backgroundColor: '#ef4444', borderColor: '#ef4444', color: '#fff' }}>Clear Preview</button>
                     <button className="btn btn-success" onClick={downloadJsonToTxt} style={{ padding: '0.5rem 1.5rem', fontSize: '1rem' }}>Download TXT</button>
                   </div>
                 </div>
@@ -451,7 +497,7 @@ function App() {
                 </div>
               </div>
             )}
-          </div>
+          </>
         )}
 
         {activeTab === 'preview' && (
