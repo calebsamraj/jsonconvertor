@@ -428,7 +428,10 @@ function App() {
               <div style={{ marginTop: '3rem', textAlign: 'left' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                   <h3 style={{ margin: 0, color: 'var(--text-color)' }}>TXT Preview</h3>
-                  <button className="btn btn-success" onClick={downloadJsonToTxt} style={{ padding: '0.5rem 1.5rem', fontSize: '1rem' }}>Download TXT</button>
+                  <div style={{ display: 'flex', gap: '1rem' }}>
+                    <button className="btn" onClick={() => setJsonToTxtOutput("")} style={{ padding: '0.5rem 1.5rem', fontSize: '1rem', backgroundColor: '#ef4444', borderColor: '#ef4444', color: '#fff' }}>Remove File</button>
+                    <button className="btn btn-success" onClick={downloadJsonToTxt} style={{ padding: '0.5rem 1.5rem', fontSize: '1rem' }}>Download TXT</button>
+                  </div>
                 </div>
                 <div className="preview-list">
                   <pre style={{ 
