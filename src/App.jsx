@@ -351,11 +351,17 @@ function App() {
             <div className="card">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
-                  <h2>JSON Database Options</h2>
-                  <p className="hint">Upload an existing JSON file to merge, or start a fresh one.</p>
+                  <h2>Start or Edit File</h2>
+                  <p className="hint" style={{ color: '#8ab4f8' }}>Upload a JSON to edit, or click Create New File. Typing Q&A pairs below will build your file.</p>
                 </div>
-                <button className="btn" onClick={clearDatabase} style={{ backgroundColor: '#ef4444', borderColor: '#ef4444', color: '#fff', fontSize: '0.85rem', padding: '0.4rem 0.8rem' }}>
-                  Create New JSON Database
+                <button 
+                  className="btn" 
+                  onClick={() => {
+                    clearDatabase();
+                  }} 
+                  style={{ backgroundColor: '#ef4444', borderColor: '#ef4444', color: '#fff', fontSize: '0.9rem', padding: '0.5rem 1rem' }}
+                >
+                  Create New File
                 </button>
               </div>
               <div className="upload-btn-wrapper mt-3">
